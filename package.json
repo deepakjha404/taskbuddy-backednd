@@ -1,0 +1,47 @@
+{
+  "name": "taskbuddy-backednd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "dev": "nodemon src/index.ts",
+    "start": "node dist/src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepakjha404/taskbuddy-backednd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/deepakjha404/taskbuddy-backednd/issues"
+  },
+  "homepage": "https://github.com/deepakjha404/taskbuddy-backednd#readme",
+  "dependencies": {
+    "@types/nodemon": "^1.19.6",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "joi": "^18.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.7.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.3"
+  }
+}
