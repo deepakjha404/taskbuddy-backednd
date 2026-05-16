@@ -19,7 +19,7 @@ class AuthService {
 
       const hashedPassword = await bcrypt.hash(password, 8);
 
-      const registeredUser = AuthDao.createuser({
+      const registeredUser = await AuthDao.createuser({
         name,
         emailId: emailId,
         password: hashedPassword,
@@ -67,7 +67,7 @@ class AuthService {
         const updateAttempt = (user.attempt || 0) + 1;
 
         if (updateAttempt > 5) {
-          const lock = await AuthDao.lockUser(user._id);
+          await AuthDao.lockUser(user._id);
 
           return res.status(403).json({
             success: false,
@@ -76,6 +76,8 @@ class AuthService {
             errorCode: "ACCOUNT_LOCKED",
           });
         }
+
+        await AuthDao.updateUser(user._id, { attempt: updateAttempt });
 
         return res.status(401).json({
           success: false,

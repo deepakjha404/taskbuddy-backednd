@@ -21,7 +21,7 @@ class AuthDao {
       {
         $set: {
           attempt: 0,
-          islocked: true,
+          isLocked: true,
           lockUntil,
         },
       },

@@ -18,6 +18,10 @@ authRoutes.post(
   AuthService.forgotPassword as RequestHandler
 );
 
+authRoutes.post(
+  "/verify/:token",
+  AuthService.verifyUser as RequestHandler
+);
 
 
 authRoutes.post("/login", AuthService.loginUser as RequestHandler);

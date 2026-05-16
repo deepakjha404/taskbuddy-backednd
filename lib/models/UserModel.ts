@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IUSerDoc, IUserModel } from "../schemas";
-import { Status } from "../enums";
+import { Role, Status } from "../enums";
 
 const userSchema = new Schema<IUSerDoc>(
   {
@@ -15,6 +15,11 @@ const userSchema = new Schema<IUSerDoc>(
       required: true,
     },
     role: {
+      type: String,
+      enum: Object.values(Role),
+      default: Role.MEMBER,
+    },
+    status: {
       type: String,
       enum: Object.values(Status),
       default: Status.ACTIVE,
