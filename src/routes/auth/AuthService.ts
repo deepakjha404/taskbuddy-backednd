@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Status } from "../../../lib/enums";
 
 class AuthService {
-  async RegisterUser(req: Request, res: Response) {
+  RegisterUser = async (req: Request, res: Response) => {
     try {
       const { name, emailId, password } = req.body;
 
@@ -40,9 +40,9 @@ class AuthService {
         .status(500)
         .json({ success: false, message: "Internal Server Error", err });
     }
-  }
+  };
 
-  async loginUser(req: Request, res: Response) {
+  loginUser = async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
 
@@ -114,9 +114,9 @@ class AuthService {
         .status(500)
         .json({ success: false, message: "Internal Server Error" });
     }
-  }
+  };
 
-  async forgotPassword(req: Request, res: Response) {
+  forgotPassword = async (req: Request, res: Response) => {
     try {
       const { email } = req.body;
 
@@ -151,9 +151,9 @@ class AuthService {
         .status(500)
         .json({ success: false, message: "Internal Server Error", err });
     }
-  }
+  };
 
-  async verifyUser(req: Request, res: Response) {
+  verifyUser = async (req: Request, res: Response) => {
     try {
       const token = req.params.token as string;
       const { password, conformPassword } = req.body;
@@ -205,9 +205,9 @@ class AuthService {
         errorCode: "UNHANDLED_EXCEPTION",
       });
     }
-  }
+  };
 
-  async changePassword(req: Request, res: Response) {
+  changePassword = async (req: Request, res: Response) => {
     try {
       const id = req.user;
       const { password, conformPassword } = req.body;
@@ -248,9 +248,9 @@ class AuthService {
         errorCode: "UNHANDLED_EXCEPTION",
       });
     }
-  }
+  };
 
-  async deleteAccount(req: Request, res: Response) {
+  deleteAccount = async (req: Request, res: Response) => {
     try {
       const user = req.user;
 
@@ -282,7 +282,7 @@ class AuthService {
         errorCode: "UNHANDLED_EXCEPTION",
       });
     }
-  }
+  };
 }
 
 export default new AuthService();

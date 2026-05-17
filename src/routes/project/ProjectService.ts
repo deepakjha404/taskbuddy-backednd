@@ -1,27 +1,28 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import ProjectDao from "../../dao/ProjectDao";
 import AuthDao from "../../dao/AuthDao";
 import { Role, Status } from "../../../lib/enums";
 
 class ProjectService {
-  private getId(data: any) {
+  private getId = (data: any) => {
     return data?._id ? data._id.toString() : data?.toString();
-  }
+  };
 
-  private isAdmin(project: any, userId: string) {
-    return this.getId(project.admin) === userId;
-  }
+  private isAdmin = (project: any, user: any) => {
+    return this.getId(project.admin) === this.getId(user);
+  };
 
-  private isProjectMember(project: any, userId: string) {
+  private isProjectMember = (project: any, user: any) => {
     const members = project.members || [];
 
     return (
-      this.isAdmin(project, userId) ||
-      members.some((member: any) => this.getId(member) === userId)
+      this.isAdmin(project, user) ||
+      members.some((member: any) => this.getId(member) === this.getId(user))
     );
-  }
+  };
 
-  async createProject(req: Request, res: Response) {
+  createProject = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const { name, description } = req.body;
@@ -47,7 +48,7 @@ class ProjectService {
     }
   }
 
-  async getProjects(req: Request, res: Response) {
+  getProjects = async (req: Request, res: Response) => {
     try {
       const user = req.user;
 
@@ -65,10 +66,18 @@ class ProjectService {
     }
   }
 
-  async getProjectById(req: Request, res: Response) {
+  getProjectById = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projectId = req.params.id as string;
+
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid project ID",
+        });
+      }
+
       const project = await ProjectDao.findProjectById(projectId);
 
       if (!project)
@@ -93,10 +102,18 @@ class ProjectService {
     }
   }
 
-  async updateProject(req: Request, res: Response) {
+  updateProject = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projectId = req.params.id as string;
+
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid project ID",
+        });
+      }
+
       const project = await ProjectDao.findProjectById(projectId);
 
       if (!project)
@@ -123,7 +140,7 @@ class ProjectService {
     }
   }
 
-  async deleteProject(req: Request, res: Response) {
+  deleteProject = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projectId = req.params.id as string;
@@ -152,7 +169,7 @@ class ProjectService {
     }
   }
 
-  async addMember(req: Request, res: Response) {
+  addMember = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projectId = req.params.id as string;
@@ -190,7 +207,7 @@ class ProjectService {
     }
   }
 
-  async removeMember(req: Request, res: Response) {
+  removeMember = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projectId = req.params.id as string;

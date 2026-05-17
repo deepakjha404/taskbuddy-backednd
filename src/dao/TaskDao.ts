@@ -40,7 +40,7 @@ class TaskDao {
       {
         $set: data,
       },
-      { new: true },
+      { returnDocument: "after" }, // ✅ replaces deprecated `{ new: true }`
     );
   }
 

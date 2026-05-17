@@ -29,7 +29,7 @@ class ProjectDao {
       {
         $set: data,
       },
-      { new: true },
+      { returnDocument: "after" },
     );
   }
 
@@ -39,7 +39,7 @@ class ProjectDao {
       {
         $addToSet: { members: userId },
       },
-      { new: true },
+      { returnDocument: "after" },
     );
   }
 
@@ -49,7 +49,7 @@ class ProjectDao {
       {
         $pull: { members: userId },
       },
-      { new: true },
+      { returnDocument: "after" },
     );
   }
 }

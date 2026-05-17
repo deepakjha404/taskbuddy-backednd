@@ -25,7 +25,7 @@ class AuthDao {
           lockUntil,
         },
       },
-      { new: true },
+      { returnDocument: "after" },
     );
   }
 
@@ -35,7 +35,7 @@ class AuthDao {
       {
         $set: data,
       },
-      { new: true },
+      { returnDocument: "after" },
     );
   }
 
@@ -43,7 +43,7 @@ class AuthDao {
     return User.findOneAndUpdate(
       { emailId: emailId },
       { $set: { password: password } },
-      { new: true },
+      { returnDocument: "after" },
     );
   }
 }

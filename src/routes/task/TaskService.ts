@@ -1,31 +1,40 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import TaskDao from "../../dao/TaskDao";
 import ProjectDao from "../../dao/ProjectDao";
 import AuthDao from "../../dao/AuthDao";
 
 class TaskService {
-  private getId(data: any) {
+  private getId = (data: any) => {
     return data?._id ? data._id.toString() : data?.toString();
-  }
+  };
 
-  private isAdmin(project: any, userId: string) {
-    return this.getId(project.admin) === userId;
-  }
+  private isAdmin = (project: any, user: any) => {
+    return this.getId(project.admin) === this.getId(user);
+  };
 
-  private isProjectMember(project: any, userId: string) {
+  private isProjectMember = (project: any, user: any) => {
     const members = project.members || [];
 
     return (
-      this.isAdmin(project, userId) ||
-      members.some((member: any) => this.getId(member) === userId)
+      this.isAdmin(project, user) ||
+      members.some((member: any) => this.getId(member) === this.getId(user))
     );
-  }
+  };
 
-  async createTask(req: Request, res: Response) {
+  createTask = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projectId = req.params.projectId as string;
       const { title, description, dueDate, priority, assignedTo } = req.body;
+
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return res.status(400).json({ success: false, message: "Invalid project ID" });
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(assignedTo)) {
+        return res.status(400).json({ success: false, message: "Invalid assigned user ID" });
+      }
 
       const project = await ProjectDao.findProjectById(projectId);
 
@@ -59,7 +68,7 @@ class TaskService {
         priority,
         assignedTo,
         project: projectId,
-        createdBy: user,
+        createdBy: this.getId(user),
       });
 
       return res.status(200).json({
@@ -74,10 +83,20 @@ class TaskService {
     }
   }
 
-  async getProjectTasks(req: Request, res: Response) {
+  getProjectTasks = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projectId = req.params.projectId as string;
+      console.log("Fetching tasks for project:", projectId);
+
+      if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        console.warn("Invalid project ID received:", projectId);
+        return res.status(400).json({
+          success: false,
+          message: "Invalid project ID",
+        });
+      }
+
       const project = await ProjectDao.findProjectById(projectId);
 
       if (!project)
@@ -98,13 +117,14 @@ class TaskService {
         tasks,
       });
     } catch (err) {
+      console.error("getProjectTasks Error:", err);
       return res
         .status(500)
         .json({ success: false, message: "Internal Server Error", err });
     }
   }
 
-  async getMyTasks(req: Request, res: Response) {
+  getMyTasks = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const tasks = await TaskDao.findUserTasks(user);
@@ -121,7 +141,7 @@ class TaskService {
     }
   }
 
-  async updateTask(req: Request, res: Response) {
+  updateTask = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const taskId = req.params.taskId as string;
@@ -139,7 +159,7 @@ class TaskService {
           .status(404)
           .json({ success: false, message: "Project not found" });
 
-      const isAssignedUser = this.getId((task as any).assignedTo) === user;
+      const isAssignedUser = this.getId((task as any).assignedTo) === this.getId(user);
 
       if (!this.isAdmin(project, user) && !isAssignedUser)
         return res
@@ -172,7 +192,7 @@ class TaskService {
     }
   }
 
-  async updateTaskStatus(req: Request, res: Response) {
+  updateTaskStatus = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const taskId = req.params.taskId as string;
@@ -184,7 +204,7 @@ class TaskService {
           .json({ success: false, message: "Task not found" });
 
       const project = await ProjectDao.findProjectById(this.getId((task as any).project));
-      const isAssignedUser = this.getId((task as any).assignedTo) === user;
+      const isAssignedUser = this.getId((task as any).assignedTo) === this.getId(user);
 
       if (!project || (!this.isAdmin(project, user) && !isAssignedUser))
         return res
@@ -207,7 +227,7 @@ class TaskService {
     }
   }
 
-  async deleteTask(req: Request, res: Response) {
+  deleteTask = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const taskId = req.params.taskId as string;

@@ -4,7 +4,7 @@ import TaskDao from "../../dao/TaskDao";
 import { TaskStatus } from "../../../lib/enums";
 
 class DashboardService {
-  async getDashboard(req: Request, res: Response) {
+  getDashboard = async (req: Request, res: Response) => {
     try {
       const user = req.user;
       const projects = await ProjectDao.findUserProjects(user);
